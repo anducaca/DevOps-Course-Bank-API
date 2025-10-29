@@ -16,8 +16,23 @@ def client():
 
 
 def test_account_creation(client: FlaskClient):
-    # Use the client to make requests to the Flask app.
-    # response = client.get('/example/route')
-    # Or use client.post to make a POST request
-    # https://flask.palletsprojects.com/en/1.1.x/testing/
-    pass
+    # Test creating an account
+    response = client.post('/accounts/testuser')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['name'] == 'testuser'
+
+def test_get_account(client: FlaskClient):
+    # Create account first
+    client.post('/accounts/testuser2')
+    # Retrieve account
+    response = client.get('/accounts/testuser2')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['name'] == 'testuser2'
+
+def test_get_account_not_found(client: FlaskClient):
+    response = client.get('/accounts/nonexistent')
+    assert response.status_code == 404
+
+
